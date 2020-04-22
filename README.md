@@ -1,4 +1,4 @@
-# vuejs-tutorial
+# vuejs-todos
 
 ## Project setup
 ```
