@@ -11,14 +11,14 @@
         v-on:keyup.enter="addTodo()"
       />
     </header>
-    <section class="main" v-show="todos.length">
+    <section class="main" v-show="filterTodos.length">
       <input class="toggle-all" type="checkbox" v-model="allDone" />
       <label for="toggle-all" v-on:click="toggleAllTodo()">Mark all as complete</label>
       <ul class="todo-list">
         <li
           class="todo"
-          v-for="todo in todos"
-          :key="todo.id"
+          v-for="todo in filterTodos"
+          v-bind:key="todo.id"
           v-bind:class="{completed: todo.completed, editing: todo === editTodo}"
         >
           <div class="view">
@@ -50,13 +50,22 @@
       </span>
       <ul class="filters">
         <li>
-          <a href="#/all" :class="{selected: visibility === 'all'}">All</a>
+          <a
+            v-on:click="changeVisibility('all')"
+            v-bind:class="{selected: visibility === 'all'}"
+          >All</a>
         </li>
         <li>
-          <a href="#/active" :class="{selected: visibility === 'active'}">Active</a>
+          <a
+            v-on:click="changeVisibility('active')"
+            v-bind:class="{selected: visibility === 'active'}"
+          >Active</a>
         </li>
         <li>
-          <a href="#/completed" :class="{selected: visibility === 'completed'}">Completed</a>
+          <a
+            v-on:click="changeVisibility('completed')"
+            v-bind:class="{selected: visibility === 'completed'}"
+          >Completed</a>
         </li>
       </ul>
       <button
@@ -86,6 +95,18 @@ export default {
     };
   },
   computed: {
+    filterTodos() {
+      switch (this.visibility) {
+        case "all":
+          return this.todos;
+        case "active":
+          return this.todos.filter(todo => !todo.completed);
+        case "completed":
+          return this.todos.filter(todo => todo.completed);
+        default:
+          return [];
+      }
+    },
     remaining() {
       return this.todos.filter(todo => !todo.completed).length;
     },
@@ -138,6 +159,9 @@ export default {
     },
     cancelEdit() {
       this.editTodo = null;
+    },
+    changeVisibility(mode) {
+      this.visibility = mode;
     }
   },
   directives: {
